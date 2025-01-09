@@ -182,7 +182,7 @@ module AnnotateModels
     end
 
     def get_schema_header_text(klass, options = {})
-      info = "#\n"
+      info = "#\n".dup
       if options[:format_markdown]
         info << "# Table name: `#{klass.table_name}`\n"
         info << "#\n"
@@ -194,7 +194,7 @@ module AnnotateModels
     end
 
     def get_schema_footer_text(_klass, options = {})
-      info = ''
+      info = ''.dup
       if options[:format_rdoc]
         info << "#--\n"
         info << "# #{END_MARK}\n"
@@ -206,9 +206,9 @@ module AnnotateModels
 
     def get_index_info(klass, options = {})
       index_info = if options[:format_markdown]
-                     "#\n# ### Indexes\n#\n"
+                     "#\n# ### Indexes\n#\n".dup
                    else
-                     "#\n# Indexes\n#\n"
+                     "#\n# Indexes\n#\n".dup
                    end
 
       indexes = retrieve_indexes_from_table(klass)
@@ -228,9 +228,9 @@ module AnnotateModels
 
     def get_col_type(col)
       if (col.respond_to?(:bigint?) && col.bigint?) || /\Abigint\b/ =~ col.sql_type
-        'bigint'
+        'bigint'.dup
       else
-        (col.type || col.sql_type).to_s
+        (col.type || col.sql_type).to_s.dup
       end
     end
 
@@ -318,9 +318,9 @@ module AnnotateModels
 
     def get_foreign_key_info(klass, options = {})
       fk_info = if options[:format_markdown]
-                  "#\n# ### Foreign Keys\n#\n"
+                  "#\n# ### Foreign Keys\n#\n".dup
                 else
-                  "#\n# Foreign Keys\n#\n"
+                  "#\n# Foreign Keys\n#\n".dup
                 end
 
       return '' unless klass.connection.respond_to?(:supports_foreign_keys?) &&
@@ -337,7 +337,7 @@ module AnnotateModels
       max_size = foreign_keys.map(&format_name).map(&:size).max + 1
       foreign_keys.sort_by {|fk| [format_name.call(fk), fk.column]}.each do |fk|
         ref_info = "#{fk.column} => #{fk.to_table}.#{fk.primary_key}"
-        constraints_info = ''
+        constraints_info = ''.dup
         constraints_info += "ON DELETE => #{fk.on_delete} " if fk.on_delete
         constraints_info += "ON UPDATE => #{fk.on_update} " if fk.on_update
         constraints_info.strip!
